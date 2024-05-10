@@ -1,0 +1,82 @@
+/*****************************************************************************************************************
+NAME:    W3 Answers
+PURPOSE: Answer classmate questions about Adventure Works
+
+MODIFICATION LOG:
+Ver      Date        Author        Description
+-----   ----------   -----------   -------------------------------------------------------------------------------
+1.0     05/10/2024   Alma Carter       1. Built this script for EC IT143
+
+
+
+NOTES: 
+
+ 
+******************************************************************************************************************/
+
+-- Q1: Q1 - Business User question - Moderate complexity: Can you provide a list of customers who purchased in March 2014 and the total amount they spent?(Rolando Ismael Alfaro Ramirez)
+-- A1: This is going to sum the TotalDue column and rename it to TotalSpent but only where the dates are between March 1 and 31
+
+SELECT CustomerID, SUM(TotalDue) AS TotalSpent
+FROM Sales.SalesOrderHeader
+WHERE OrderDate BETWEEN '2014-03-01' AND '2014-03-31'
+GROUP BY CustomerID;
+
+---Q2 - Metadata question:
+---How many tables are there in the Adventure-work database? (Okolocha Felix Azubike)
+SELECT COUNT(*)
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE';
+
+---Q3 - Metadata question:
+---Can you provide a list of columns in the person.person table? (Liah Macasaet)
+SELECT name
+FROM sys.columns
+WHERE object_id = OBJECT_ID('Person.Person')
+
+---Q4Business User question - Marginal complexity: What is the total number of bicycles in inventory? (Samuel Owusu Boampong)
+-- This is going to sume the quantity column but only where the productnumber starts with BK, I found out those are the only complete bikes
+SELECT SUM(Quantity) AS TotalBikes
+FROM Production.ProductInventory
+WHERE ProductID IN (
+    SELECT ProductID
+    FROM Production.Product
+    WHERE ProductNumber LIKE 'BK%'
+);
+---Q5: Business User question - Increased complexity: Get the average age of employees from the BusinessEntity table. What is the average cost of each order? (Sambo Dari)
+---The business entity table doesn't have an age column so I modified this a bit to be my own question of average order cost. It just averages the total due from the SalesOrderHeader table
+SELECT
+    AVG(TotalDue) AS AverageOrderCost
+FROM
+    Sales.SalesOrderHeader;
+---Q6 - Business User question - Increased complexity: Sales territories will undergo relocation of salespeople, to help with logistics we need to know which areas have the lowest number of salespeople. Which territories have the lowest number of sellers? (Alexandre Cerqueira Da Silva Filho)
+---This one is a bit more involved It's going to Select the TerritoryID and Territory name, then count the
+---Sales Persons renamed as SellersCount. Join the SalesPerson table on the TerritoryID and ordeer A-Z
+SELECT
+    SalesTerritory.TerritoryID,
+    SalesTerritory.Name,
+    COUNT(SalesPerson.BusinessEntityID) AS SellersCount
+FROM
+    Sales.SalesTerritory
+LEFT JOIN
+    Sales.SalesPerson ON SalesTerritory.TerritoryID = SalesPerson.TerritoryID
+GROUP BY
+    SalesTerritory.TerritoryID, SalesTerritory.Name
+ORDER BY
+    SellersCount ASC;
+
+-- Q7: Q7 - Business User question - Moderate complexity: Could you provide a list, sorted alphabetically, containing the email addresses, passwords, and corresponding names of all customers, labeled as "information"? (Rolando Ismael Alfaro Ramirez)
+-- I was having a lot of trouble with this question, my code doesn't run but it should look something like this I think
+SELECT CustomerID, 
+FirstName as Customer Name
+Email, 
+Person.Password.Password
+FROM Person.Person
+ORDER BY "Customer Name" ASC;
+---Q8 - Business User question - Marginal complexity: Count the distinct colors for mountain bikes? (Samuel Owusu Boampong)
+---This will only count the distinct colors from the production.product table called Color
+SELECT COUNT(distinct color) as Color
+FROM production.product
+
+
+
