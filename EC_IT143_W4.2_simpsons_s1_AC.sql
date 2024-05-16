@@ -1,0 +1,1 @@
+--- Q: What is the total amount both Homer and Marge have spent from the debit column?
