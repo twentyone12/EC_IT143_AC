@@ -1,10 +1,30 @@
-DROP TABLE IF EXISTS dbo.t_hello_world;
-GO
+CREATE FUNCTION [dbo].[udf_parse_first_name]
+(@v_combined_name AS VARCHAR(500)
+)
+RETURNS VARCHAR(100)
 
-CREATE TABLE dbo.t_hello_world
-(my_message		VARCHAR(25) NOT NULL,
-current_date)time DATETIME NOT NULL
-						DEFAULT GETDATE(),
-CONSTRAINT PK_t_hello_world PRIMARY KEY CLUSTERED(my_message ASC)
-);
+/***********************************
+Name: dbo.udf_parse_first_name
+PURPOSE: Pars first name form combined name
+
+MODIFICATION LOG
+
+RUNTIME
+1s
+
+NOTES
+Adaptted from the following
+
+*****************/
+
+BEGIN
+
+	DECLARE @v_first_name AS VARCHAR(100);
+
+	SET @v_first_name = LEFT(@v_combined_name, CHARINDEX(' ', @v_combined_name + ' ') - 1);
+
+	RETURN @v_first_name;
+
+END;
+
 GO
